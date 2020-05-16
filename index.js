@@ -40,8 +40,9 @@ const PLATES_BY_TIME = 'pt';
 const USERS_BY_GUID = 'ug';
 const USERS_BY_NAME = 'un';
 
-function init(db, opts, cb) {
-
+function init(db, opts, cb, clientConnectCB) {
+  clientConnectCB = clientConnectCB || function(){};
+  
   const dataPath = opts.dataPath;
   
   fs.ensureDirSync(dataPath, {
@@ -83,7 +84,7 @@ function init(db, opts, cb) {
   labMulti.ready(function() {
     adminMulti.ready(function() {
       
-      initPeers(core, opts);
+      initPeers(core, opts, clientConnectCB);
       
       cb(null, core);
     });
@@ -91,7 +92,7 @@ function init(db, opts, cb) {
 }
 
 
-function beginReplication(peer, socket, core, isInitiator) {
+function beginReplication(peer, socket, core, isInitiator, cb) {
 
   const peerDesc = {
     type: peer.type,
@@ -100,7 +101,8 @@ function beginReplication(peer, socket, core, isInitiator) {
   }
   
   if(peer.type === 'lab-device') {
-    return labDeviceConnection(peer, socket, peerDesc);
+    cb(peer, peerDesc, socket);
+    return peerDesc;
   }
   
   var labReadAllowed = false;
@@ -146,7 +148,7 @@ function beginReplication(peer, socket, core, isInitiator) {
 }
 
 
-function initInbound(core, opts) {
+function initInbound(core, opts, cb) {
 
   const peerCerts = tlsUtils.getPeerCerts(opts.tlsPeers);
 
@@ -173,7 +175,7 @@ function initInbound(core, opts) {
         description: "insecure test peer",
       }
     }
-    const peerDesc = beginReplication(peer, socket, core, true);
+    const peerDesc = beginReplication(peer, socket, core, true, cb);
 
     console.log("Peer connected:", peerDesc);
   });
@@ -289,9 +291,9 @@ function initOutbound(opts) {
 }
 
 
-function initPeers(core, opts) {
+function initPeers(core, opts, cb) {
   if(opts.host) {
-    initInbound(core, opts);
+    initInbound(core, opts, cb);
   }
 
   if(!opts.introvert) {
