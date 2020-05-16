@@ -1,0 +1,30 @@
+{
+  "name": "renegade-lims-core",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "bin/server.js"
+  },
+  "dependencies": {
+    "async": "^3.2.0",
+    "backoff": "^2.5.0",
+    "charwise": "^3.0.1",
+    "fs-extra": "^9.0.0",
+    "kappa-core": "^6.0.0",
+    "kappa-view": "^3.1.0",
+    "level-livefeed": "^0.2.0",
+    "monotonic-timestamp": "0.0.9",
+    "multifeed": "^5.2.2",
+    "multiplex": "^6.7.0",
+    "read-only-stream": "^2.0.0",
+    "subleveldown": "^5.0.0",
+    "through2": "^3.0.1",
+    "uuid": "^8.0.0"
+  },
+  "author": {
+    "name": "Marc Juul",
+    "email": "npm@juul.io",
+    "url": "https://github.com/juul"
+  },
+  "devDependencies": {},
+  "license": "AGPL-3.0"
+}
