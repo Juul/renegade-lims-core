@@ -100,7 +100,7 @@ function beginReplication(peer, socket, core, isInitiator, cb) {
     port: socket.remotePort
   }
   
-  if(peer.type === 'lab-device') {
+  if(peer.type === 'lab-device' || peer.type === 'decapper') {
     cb(peer, peerDesc, socket);
     return peerDesc;
   }
