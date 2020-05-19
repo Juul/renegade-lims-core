@@ -103,6 +103,7 @@ function beginReplication(peer, socket, core, isInitiator, cb) {
   // These peer types are not full replication peers
   // They do no do any replication and instead communicate using rpc-multistream 
   if(peer.type === 'lab-device' || peer.type === 'decapper') {
+    console.log("This peer is a", peer.type, "so not initiating replication");
     cb(peer, peerDesc, socket);
     return peerDesc;
   }
@@ -126,12 +127,22 @@ function beginReplication(peer, socket, core, isInitiator, cb) {
     return;
   }
 
-  console.log("peer is of type:", peer.type)
+  console.log("Initiating replication for peer of type:", peer.type)
   
   const mux = multiplex();
+  mux.on('error', function(err) {
+    console.error("multiplex error:", err);
+  });
+         
   const labStream = mux.createSharedStream('labStream');
+  labStream.on('error', function(err) {
+    console.error("labStream error:", err);
+  });
   const adminStream = mux.createSharedStream('adminStream');
-
+  adminStream.on('error', function(err) {
+    console.error("adminStream error:", err);
+  });
+  
   socket.pipe(mux).pipe(socket);
 
   labStream.pipe(core.labMulti.replicate(isInitiator, {
