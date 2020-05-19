@@ -99,7 +99,9 @@ function beginReplication(peer, socket, core, isInitiator, cb) {
     host: (peer.connect) ? peer.connect.host : socket.remoteAddress,
     port: socket.remotePort
   }
-  
+
+  // These peer types are not full replication peers
+  // They do no do any replication and instead communicate using rpc-multistream 
   if(peer.type === 'lab-device' || peer.type === 'decapper') {
     cb(peer, peerDesc, socket);
     return peerDesc;
@@ -204,9 +206,9 @@ function initInbound(core, opts, cb) {
 }
 
 
-function connectToPeerOnce(peer, opts, cb) {
+function connectToPeerOnce(core, peer, opts, cb) {
   
-  console.log("Connecting to peer:", peer.connect.host + ':' + peer.connect.port);
+  console.log("========= Connecting to peer:", peer.connect.host + ':' + peer.connect.port);
   const socket = tls.connect(peer.connect.port, peer.connect.host, {
     ca: peer.cert, // only trust this cert
     key: opts.tlsKey,
@@ -239,7 +241,7 @@ function connectToPeerOnce(peer, opts, cb) {
   });
 }
 
-function connectToPeer(peer, opts) {
+function connectToPeer(core, peer, opts) {
   if(!peer.connect.port || !peer.connect.host) return;
 
   // Retry with increasing back-off 
@@ -251,7 +253,7 @@ function connectToPeer(peer, opts) {
 
   var count = 0;
   function tryConnect() {
-    connectToPeerOnce(peer, opts, function(disconnected) {
+    connectToPeerOnce(core, peer, opts, function(disconnected) {
       if(disconnected) {
         if(count > 0) {
           back.backoff();
@@ -280,13 +282,12 @@ function connectToPeer(peer, opts) {
 }
 
 
-function initOutbound(opts) {
+function initOutbound(core, opts) {
   if(!opts.tlsPeers) return;
-  
   var peer;
   for(peer of opts.tlsPeers) {
     if(!peer.connect) continue;
-    connectToPeer(peer, opts);
+    connectToPeer(core, peer, opts);
   }
 }
 
