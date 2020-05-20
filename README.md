@@ -23,6 +23,8 @@ The `opts` is simply the `settings.js` which is explained by the `settings.js.ex
 
 All database views are created using `kappa-view` and are located `views/`.
 
+As an optional fourth argument you can add a callback which is called whenever a client has successfully connected. Received arguments are `peer` (the peer from settings.js), `peerDesc` which has peer type, host and port, and `socket`.
+
 # Copyright and license
 
 * Copyright 2020 renegade.bio
