@@ -8,7 +8,7 @@ module.exports = function(o) {
   if(val.type !== 'swabTube') return false;
 
   if(!val.barcode) return false;
-  if(!val.formBarcode) return false;
+//  if(!val.formBarcode) return false;
   
   return true;
 }

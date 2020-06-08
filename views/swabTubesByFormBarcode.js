@@ -20,9 +20,9 @@ module.exports = function(db) {
       const firstPass = [];
       var entry;
       for(entry of entries) {
-        if(!validateSwabTube(entry)) {
-          continue;
-        }
+        if(!validateSwabTube(entry)) continue;
+        if(!entry.value.formBarcode) continue;
+        
         nicify(entry);
 
         entry.ts = u.monotonicTimestampToTimestamp(entry.value.createdAt);
@@ -66,6 +66,8 @@ module.exports = function(db) {
     api: {
       // TODO are barcodes really guaranteed to be unique?
       get: function(core, key, cb) {
+        if(!key) return cb();
+        
         this.ready(function() { // wait for all views to catch up
           db.get(key, {valueEncoding: 'json'}, cb);
         })
