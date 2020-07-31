@@ -13,7 +13,7 @@
     "kappa-view": "^3.1.0",
     "level-livefeed": "^0.2.0",
     "monotonic-timestamp": "0.0.9",
-    "multifeed": "^5.2.2",
+    "multifeed": "^5.2.4",
     "multiplex": "^6.7.0",
     "read-only-stream": "^2.0.0",
     "subleveldown": "^5.0.0",
